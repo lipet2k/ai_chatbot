@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 119.84 160.26">
+    <defs>
+        <style>.cls-1{fill:#72c8f1;stroke:#5fa7c9;stroke-miterlimit:10;}.cls-2{fill:#49b8ea;}</style>
+    </defs>
+    <g id="Layer_2" data-name="Layer 2">
+        <g id="balloon1">
+            <g id="Body">
+                <path class="cls-1" d="M59.92.5C27.1.5.5,31.67.5,70.12c0,25,12.41,45.36,28,59.14l0,0L51.5,149.2c-2.91,5.57-3.37,10.93-.26,10.53,8.66-1.13,8.68-1.39,17.36,0,3.11.5,2.64-4.9-.28-10.52l22.9-19.89h0c15.66-13.79,28.11-34.19,28.11-59.19C119.34,31.67,92.73.5,59.92.5Z" />
+                <ellipse class="cls-2" cx="59.92" cy="148.89" rx="9.57" ry="2.39" />
+            </g>
+        </g>
+    </g>
+</svg>

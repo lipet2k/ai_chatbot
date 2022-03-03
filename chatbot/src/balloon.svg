@@ -1,0 +1,17 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160.14 330.52">
+    <defs>
+        <style>.cls-1{fill:#72c8f1;}.cls-2{fill:#49b8ea;}.cls-3{fill:none;stroke:#231f20;stroke-miterlimit:10;}.cls-4{fill:#a9dcf7;}</style>
+    </defs>
+    <!-- body -->
+    <path class="cls-1" d="M400.92,141.14c-44.22,0-80.07,39.63-80.07,88.51,0,31.73,15.1,59.56,37.79,75.18l0,0,30.91,25.32c-3.92,7.09-4.54,13.9-.35,13.39,11.68-1.43,11.7-1.77,23.4,0,4.19.63,3.55-6.23-.38-13.37L443.1,304.9h0C465.85,289.28,481,261.42,481,229.65,481,180.77,445.14,141.14,400.92,141.14Z" transform="translate(-320.85 -141.14)" />
+
+    <!--bottom-->
+    <ellipse class="cls-2" cx="80.07" cy="188.65" rx="12.9" ry="3.04" />
+
+    <!-- string -->
+    <path class="cls-3" d="M412.68,331c.89-.72-24.65.2-23.94-.06,4.06-1.48,23.93.25,24.22.61,34,41.65-70.4,111-24.49,139.67" transform="translate(-320.85 -141.14)" />
+
+    <ellipse class="cls-4" cx="353.9" cy="182.78" rx="14.15" ry="9.61" transform="translate(-293.43 269.8) rotate(-62.26)" />
+    <ellipse class="cls-4" cx="339.57" cy="202.58" rx="7.29" ry="5.22" transform="translate(-318.63 267.7) rotate(-62.26)" />
+
+</svg>

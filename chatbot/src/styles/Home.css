@@ -1,0 +1,15 @@
+/* @media (prefers-reduced-motion: no-preference) {
+    .App-balloon {
+      animation: balloon-bob infinite 2s linear;
+    }
+  }
+
+@keyframes balloon-bob {
+    from {
+        transform: translate(0px, 0px);
+      }
+
+    to {
+        transform: translate(0px, 20px);
+    }
+} */
