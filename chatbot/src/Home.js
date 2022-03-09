@@ -55,8 +55,6 @@ const Og_balloon = () => {
         body: bodies[activeIndex]
     });
 
-    gsap.to("#first_morph", {duration: 1, morphSVG:"#second_morph"});
-
 
     return (
         <div className="someballoon w-[100px] mx-auto mt-20">
@@ -271,6 +269,19 @@ const Balloon_Seven = () => {
 
             <img src={seven_highlights} className="balloon-highlights absolute bottom-[20px] left-[60px]" width="15px" height="50px" />
         </div>
+    )
+}
+
+const Morphing_Balloon = () => {
+    const balloonRef = useRef();
+
+    useEffect(() => {
+        gsap.to(balloonRef.current, {
+            translateY: "+=1",
+            repeat: -1,
+            yoyo: true
+        })
+    }
     )
 }
 
