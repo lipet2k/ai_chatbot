@@ -1,6 +1,9 @@
 import "./App.css";
+import "./home.css"
 import { animated, useSpring } from "react-spring";
 import { useState, useEffect } from "react";
+import Slider from '@mui/material/Slider';
+import Box from '@mui/material/Box';
 
 import cloud from "./cloud.png";
 
@@ -96,31 +99,54 @@ const string = [
     "M77.0167 148.701C77.0167 148.701 62.1758 149.209 62.1758 148.701C62.1758 148.192 71.2922 147.614 77.0167 148.701ZM77.0167 148.701C99.066 180.738 33.766 239.726 61.7517 261.084"
 ];
 
+function closestToIncrement(num)  {
+    return Math.round(num / 10);
+}
+
 function Home() {
 
     const [styles, api] = useSpring(() => ({
-        from: { y: -10},
+        from: { y: -10 },
     }))
 
     useEffect(() => {
         api({
-          y: 10,
-          config: { duration: "1000" },
-          loop: { reverse: true },
+            y: 10,
+            config: { duration: "1000" },
+            loop: { reverse: true },
         })
-      }, [])
+    }, [])
 
-    
+    const [pauseValue, setPauseValue] = useState(false);
 
     const [activeIndex, setActiveIndex] = useState(0);
     const animationProps = useSpring({
-        config: { duration: 3000 },
+        pause: pauseValue,
+        config: { duration: 1000 },
         body: bodies[activeIndex],
         topBubble: bubbles[activeIndex],
         bottomBubble: bubbles_two[activeIndex],
         string: string[activeIndex],
-        color: colors[activeIndex]
+        color: colors[activeIndex],
+
     });
+
+    const [sliderValue, setSliderValue] = useState(0);
+
+    const handleChange = (event, newValue) => {
+        let num = closestToIncrement(newValue);
+        if (newValue % 10 !== 0) {
+            setActiveIndex(num);
+            setSliderValue(newValue);
+            setTimeout(setPauseValue(true), 500);
+        }
+        else {
+            setActiveIndex(num);
+            setSliderValue(newValue);
+    }
+    };
+
+
 
     return (
         <div className="Figma">
@@ -128,75 +154,88 @@ function Home() {
             <marquee behavior="alternate" scrollamount="2" direction="left">
                 <img src=
                     {cloud} width="200"
-                    alt="cloud" className="mt-10"/>
+                    alt="cloud" className="mt-10" />
             </marquee>
 
             <marquee behavior="alternate" scrollamount="4" direction="right">
                 <img src=
                     {cloud} width="200"
-                    alt="cloud" className="mt-5"/>
+                    alt="cloud" className="mt-5" />
             </marquee>
 
-            <animated.div className="balloons" style={{...styles}}>
-            <div className="balloon_svg place-self-center mx-[42rem] mt-[2rem] mb-10">
-                <svg
-                    width="155"
-                    height="261"
-                    viewBox="0 0 120 261"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <animated.path
-                        d={animationProps.body} fill={animationProps.color} />
-                    <animated.path
-                        d={animationProps.topBubble} fill="#A9DCF7" />
-                    <animated.path
-                        d={animationProps.bottomBubble} fill="#AADCF7" />
-                    <animated.path
-                        d={animationProps.string} stroke="black" />
-                </svg>
-            </div>
+            <animated.div className="balloons" style={{ ...styles }}>
+                <div className="balloon_svg place-self-center mx-[42rem] mt-[2rem] mb-10">
+                    <svg
+                        width="155"
+                        height="261"
+                        viewBox="0 0 120 261"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <animated.path
+                            d={animationProps.body} fill={animationProps.color} />
+                        <animated.path
+                            d={animationProps.topBubble} fill="#A9DCF7" />
+                        <animated.path
+                            d={animationProps.bottomBubble} fill="#AADCF7" />
+                        <animated.path
+                            d={animationProps.string} stroke="black" />
+                    </svg>
+                </div>
 
             </animated.div>
 
             <div className="button-container mb-80 flex flex-col">
-            <div className="buttons">
-                {["Original", "Deflated", "More deflated", "Super Deflated", "Even more deflated", "popped", "what is this?", "inflate"].map((text, index) => (
-                    <button
-                        type="button"
-                        key={index}
-                        onClick={() => {
-                            setActiveIndex(index);
-                        }}
-                        style={{
-                            background: activeIndex === index ? "purple" : "indigo",
-                            color: activeIndex === index ? "white" : "white",
-                        }}
-                        className="h-12 px-6 shadow rounded-full hover:bg-blue-400 text-gray-800 font-bold mx-2 mb-96 text-lg">
-                        {text}
-                    </button>
-                ))}
+                <div className="buttons">
+                    {["Original", "Deflated", "More deflated", "Super Deflated", "Even more deflated", "popped", "what is this?", "inflate"].map((text, index) => (
+                        <button
+                            type="button"
+                            key={index}
+                            onClick={() => {
+                                setActiveIndex(index);
+                            }}
+                            style={{
+                                background: activeIndex === index ? "purple" : "indigo",
+                                color: activeIndex === index ? "white" : "white",
+                            }}
+                            className="h-12 px-6 shadow rounded-full hover:bg-blue-400 text-gray-800 font-bold mx-2 mb-10 text-lg">
+                            {text}
+                        </button>
+                    ))}
 
-</div>
+                </div>
+
+                <Box width={400} className="place-self-center">
+                    <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="auto" onChange={handleChange} max={70} value={sliderValue}/>
+                </Box>
+
 
                 <div className="buttonHere">
-                <button
-                    type="button"
-                    key="7"
-                    onClick={() => {
-                        setActiveIndex("7");
-                    }}
-                    style={{
-                        background: activeIndex === "7" ? "red" : "orange",
-                        color: activeIndex === "7" ? "white" : "white",
-                    }}
-                    className="h-12 px-6 shadow rounded-full hover:bg-blue-400 text-gray-800 font-bold mx-2 mb-96 text-lg">
-                    {"inflate"}
-                </button>
+
+                    <button
+                        onClick={() => {
+                            setPauseValue(true);
+                        }} style={{
+                            background: activeIndex === "7" ? "red" : "orange",
+                            color: activeIndex === "7" ? "white" : "white",
+                        }}
+                        className="h-12 px-6 shadow rounded-full hover:bg-blue-400 text-gray-800 font-bold mx-2 mb-96 text-lg">pause</button>
+                    <button
+                        onClick={() => {
+                            setPauseValue(false);
+                        }} style={{
+                            background: activeIndex === "7" ? "red" : "orange",
+                            color: activeIndex === "7" ? "white" : "white",
+                        }}
+                        className="h-12 px-6 shadow rounded-full hover:bg-blue-400 text-gray-800 font-bold mx-2 mb-96 text-lg">restart</button>
+
+
+
+
 
                 </div>
 
-                </div>
+            </div>
         </div>
     )
 }

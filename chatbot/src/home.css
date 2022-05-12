@@ -1,19 +1,37 @@
 .cls-1 {
-    fill:#74c8f0;
-    stroke:#60a7c9;
-    stroke-width:0.79px;
+    fill: #74c8f0;
+    stroke: #60a7c9;
+    stroke-width: 0.79px;
 }
 
-.cls-1,.cls-3 {
-    stroke-miterlimit:10;
+.cls-1,
+.cls-3 {
+    stroke-miterlimit: 10;
 }
 
 .cls-2 {
-    fill:#4cb8e9;
+    fill: #4cb8e9;
 }
 
-.cls-3{fill:none;stroke:#231f20;}
+.cls-3 {
+    fill: none;
+    stroke: #231f20;
+}
 
-.cls-4{fill:#aadcf7;}
+.cls-4 {
+    fill: #aadcf7;
+}
 
-.cls-1{fill:#72c8f1;stroke:#5fa7c9;stroke-miterlimit:10;}.cls-2{fill:#49b8ea;}
+.cls-1 {
+    fill: #72c8f1;
+    stroke: #5fa7c9;
+    stroke-miterlimit: 10;
+}
+
+.cls-2 {
+    fill: #49b8ea;
+}
+
+.slider-container {
+    height: 20px;
+}
