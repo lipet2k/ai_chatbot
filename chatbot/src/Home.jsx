@@ -112,7 +112,7 @@ function Home() {
     useEffect(() => {
         api({
             y: 10,
-            config: { duration: "1000" },
+            config: { duration: "5000" },
             loop: { reverse: true },
         })
     }, [])
@@ -135,12 +135,15 @@ function Home() {
 
     const handleChange = (event, newValue) => {
         let num = closestToIncrement(newValue);
-        if (newValue % 10 !== 0) {
+        let betweenValue = (newValue % 10) / 10
+        if (newValue % 10 >= 1) {
+            setPauseValue(false);
             setActiveIndex(num);
             setSliderValue(newValue);
-            setTimeout(setPauseValue(true), 500);
+            setTimeout(() => {setPauseValue(true)}, betweenValue * 1000);
         }
         else {
+            setPauseValue(false);
             setActiveIndex(num);
             setSliderValue(newValue);
     }
