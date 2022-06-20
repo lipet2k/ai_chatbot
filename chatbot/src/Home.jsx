@@ -20,6 +20,43 @@ const theme = createTheme({
     },
   });
 
+const str = "M68 149.5C68 149.5 118.5 112 119.5 68.5C119.886 51.6987 115.121 35.4211 106.017 23C95.6101 8.80322 79.5342 -0.355579 59 0.500012C44.0037 1.12486 31.2571 5.96631 21.5 14.0677C6.20766 26.765 -1.74148 47.4701 0.500002 72.5C4.17165 113.5 52 149.5 52 149.5C50 151 46 160.5 52 159.5C58 158.5 63.5 158.5 69.5 159.5C73.4284 160.155 68 149.5 68 149.5Z"
+const new_str = str.split(/[\MCZ]+/);
+const strM = new_str[1]
+let string_strM = strM.split(" ")
+let new_strM = ""
+for (let i = 0; i < string_strM.length - 1; i++) {
+    new_strM+= (Number(string_strM[i]) * 2) + " "
+}
+new_strM += string_strM[string_strM.length - 1] * 2
+console.log(new_strM)
+
+let strC = new_str.splice(2, new_str.length-3)
+
+console.log(strC)
+
+for (let x = 0; x < strC.length; x++) {
+    let numArray = strC[x].split(" ")
+    let new_array = []
+    for (let i = 0; i < numArray.length; i++) {
+        new_array.push(Number(numArray[i]) * 2)
+    }
+    strC[x] = new_array
+}
+console.log(strC)
+
+let final_str = "M" + new_strM
+for (let x = 0; x < strC.length; x++) {
+    let array = strC[x]
+    final_str += "C"
+    for (let i = 0; i < array.length - 1; i++) {
+        final_str += array[i] + " "
+    }
+    final_str += array[array.length - 1]
+}
+final_str += "Z"
+
+console.log(final_str)
 
 
 const Balloons = {
@@ -27,6 +64,10 @@ const Balloons = {
     Sad: sad,
     Mad: "mad"
 };
+
+function fourierTransform(apply_this) {
+    //make new points
+}
 
 function closestToIncrement(num)  {
     return Math.round(num / 10);
@@ -92,9 +133,7 @@ function Home() {
             setAnimatingBool(false);
     }
     };
-
-
-
+    
     return (
         <ThemeProvider theme={theme}>
         <div className="Figma">
