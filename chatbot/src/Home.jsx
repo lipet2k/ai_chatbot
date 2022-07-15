@@ -20,43 +20,127 @@ const theme = createTheme({
     },
   });
 
-const str = "M68 149.5C68 149.5 118.5 112 119.5 68.5C119.886 51.6987 115.121 35.4211 106.017 23C95.6101 8.80322 79.5342 -0.355579 59 0.500012C44.0037 1.12486 31.2571 5.96631 21.5 14.0677C6.20766 26.765 -1.74148 47.4701 0.500002 72.5C4.17165 113.5 52 149.5 52 149.5C50 151 46 160.5 52 159.5C58 158.5 63.5 158.5 69.5 159.5C73.4284 160.155 68 149.5 68 149.5Z"
-const new_str = str.split(/[\MCZ]+/);
-const strM = new_str[1]
-let string_strM = strM.split(" ")
-let new_strM = ""
-for (let i = 0; i < string_strM.length - 1; i++) {
-    new_strM+= (Number(string_strM[i]) * 2) + " "
-}
-new_strM += string_strM[string_strM.length - 1] * 2
-console.log(new_strM)
-
-let strC = new_str.splice(2, new_str.length-3)
-
-console.log(strC)
-
-for (let x = 0; x < strC.length; x++) {
-    let numArray = strC[x].split(" ")
-    let new_array = []
-    for (let i = 0; i < numArray.length; i++) {
-        new_array.push(Number(numArray[i]) * 2)
+class ParsingClass {
+    constructor(str) {
+        this.delimeterized = str.split(/[MCZ]+/);
+        this.array_strM = this.split_by_m_tag();
+        this.strC = this.split_by_c_tag();
     }
-    strC[x] = new_array
-}
-console.log(strC)
 
-let final_str = "M" + new_strM
-for (let x = 0; x < strC.length; x++) {
-    let array = strC[x]
-    final_str += "C"
-    for (let i = 0; i < array.length - 1; i++) {
-        final_str += array[i] + " "
+    split_by_m_tag() {
+        // getting the M tag
+        const strM = this.delimeterized[1]
+        return strM.split(" ").map(x => Number(x));
     }
-    final_str += array[array.length - 1]
-}
-final_str += "Z"
 
-console.log(final_str)
+    split_by_c_tag() {
+    // getting the C tags
+    const string_C = this.delimeterized.slice(2)
+    string_C.pop()
+    const strC = []
+    for (let i = 0; i < string_C.length; ++i) {
+        strC.push(string_C[i].split(" ").map(x => Number(x)))
+    }
+    return strC;
+    }
+
+    scale(factor) {
+        for (let i = 0; i < this.array_strM.length; ++i) {
+            this.array_strM[i] *= factor
+        }
+
+        for (let x = 0; x < this.strC.length; ++x) {
+            const array = this.strC[x]
+            for (let i = 0; i < array.length; ++i) {
+                array[i] *= factor
+            }
+        }
+    }
+
+    squish(factor) {
+        const array = this.strC[4]
+        const og_y = array[5]
+
+        for (let i = 5; i < this.strC.length; ++i) {
+            const other_array = this.strC[i]
+            for (let x = 0; x < other_array.length; ++x) {
+                if (x % 2 == 1) {
+                    other_array[x] += - og_y + factor
+                }
+            }
+        }
+
+        const other_array = this.strC[0]
+        for (let x = 0; x < other_array.length; ++x) {
+            if (x % 2 == 1) {
+                other_array[x] += - og_y + factor
+            }
+           if (x == 5) {
+            other_array[x] = other_array[0]
+           }
+        }
+
+        this.array_strM[1] += - og_y + factor
+
+    }
+
+    translate_all(factor) {
+
+        for (let x = 0; x < this.strC.length; ++x) {
+            const array = this.strC[x]
+            for (let i = 0; i < array.length; ++i) {
+                if (i % 2 == 1) {
+                    array[i] -= factor
+                }
+
+            }
+        }
+
+        this.array_strM[1] -= factor
+    }
+
+    printOutSVG(boolean) {
+        let str = "";
+        
+        str += this.printArrayWithPrefix(this.array_strM, "M");
+
+        for (let i = 0; i < this.strC.length; ++i) {
+
+            if (i == this.strC.length - 1 && boolean) {
+                str += this.printArrayWithPrefix(this.strC[i], "C") + "Z"
+            }
+            else {
+                str += this.printArrayWithPrefix(this.strC[i], "C")
+            }
+        }
+        return str;
+    }
+
+    printArrayWithPrefix(array, prefix) {
+        let str = prefix;
+        for (let i = 0; i < array.length; ++i) {
+            if (i == array.length - 1) {
+                str += array[i]
+            }
+            else {
+                str += array[i] + " "
+            }
+        }
+        return str;
+    }
+}
+
+const parsedClass = new ParsingClass(happy.bodies[1]);
+const parsedString = new ParsingClass(happy.string[1])
+
+parsedClass.squish(10)
+parsedString.translate_all(50)
+
+console.log(parsedClass.printOutSVG(true))
+console.log(parsedString.printOutSVG(false))
+
+happy.bodies[1] = parsedClass.printOutSVG(true)
+happy.string[1] = parsedString.printOutSVG(false)
 
 
 const Balloons = {
@@ -64,10 +148,6 @@ const Balloons = {
     Sad: sad,
     Mad: "mad"
 };
-
-function fourierTransform(apply_this) {
-    //make new points
-}
 
 function closestToIncrement(num)  {
     return Math.round(num / 10);

@@ -1,70 +1,125 @@
-# Getting Started with Create React App
+# Using HTTPs with React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Setting up the EC2 instance on AWS
+- Go to AWS Management Console
+- Create new keypair (according to your personal computer format)
+- Launch EC2 Instance
+- Choose Linux AMI
+- Choose the desired instance type (reccomended the free tier instance)
+- Define the key pair
+- Confirm that your instance is connected
+- Connect to the instance using ssh (pasting the command)
 
-## Available Scripts
+# Let's encrypt
 
-In the project directory, you can run:
+## Introduction
+To start off, I run an NGINX web server. <br/>
+This could be running anywhere in the cloud. <br/>
 
-### `npm start`
+```
+docker run -it -p 80:80 nginx bash
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# get my public IP for this server 
+curl ifconfig.co
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+# lets get out of the container
+exit
 
-### `npm test`
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Now that we have the public IP for our server, lets start it up again <br/>
+This time, without bash <br/>
+We should be able to access it in the browser <br/>
 
-### `npm run build`
+```
+docker run -it -p 80:80 nginx
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+In the video, we create a DNS record and point it to the IP of our server <br/>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Certbot
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The [docs](https://certbot.eff.org/)
 
-### `npm run eject`
+To build certbot, i simply change directory and build my certbot container <br/>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```
+cd .\security\letsencrypt\introduction\
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+docker build . -t certbot
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+docker run -it --rm --name certbot `
+-v ${PWD}:/letsencrypt `
+-v ${PWD}/certs:/etc/letsencrypt `
+certbot bash
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
 
-## Learn More
+## NGINX 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+We've customised our `nginx.conf` as shown in the video <br/>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Run this NGINX, we mount the shared folder that certbot will use:
 
-### Code Splitting
+```
+cd .\security\letsencrypt\introduction\
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+docker run -it --rm --name nginx `
+-v ${PWD}/nginx.conf:/etc/nginx/nginx.conf `
+-v ${PWD}:/letsencrypt `
+-v ${PWD}/certs:/etc/letsencrypt `
+-p 80:80 `
+-p 443:443 `
+nginx
 
-### Analyzing the Bundle Size
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Issue certificate
 
-### Making a Progressive Web App
+In certbot, generate our cert:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+certbot certonly --webroot
 
-### Advanced Configuration
+# webroot is the folder we mounted: /letsencrypt
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+# certificate outputs under etc/letsencrypt/live/**
+# since we share this volume with our webserver, we dont need to copy
+# certificates across.
 
-### Deployment
+IMPORTANT NOTES:
+ - Congratulations! Your certificate and chain have been saved at:
+   /etc/letsencrypt/live/marcel.guru/fullchain.pem
+   Your key file has been saved at:
+   /etc/letsencrypt/live/marcel.guru/privkey.pem
+   Your cert will expire on 2020-12-03. To obtain a new or tweaked
+   version of this certificate in the future, simply run certbot
+   again. To non-interactively renew *all* of your certificates, run
+   "certbot renew"
+ - Your account credentials have been saved in your Certbot
+   configuration directory at /etc/letsencrypt. You should make a
+   secure backup of this folder now. This configuration directory will
+   also contain certificates and private keys obtained by Certbot so
+   making regular backups of this folder is ideal.
+ - If you like Certbot, please consider supporting our work by:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+   Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+   Donating to EFF:                    https://eff.org/donate-le
 
-### `npm run build` fails to minify
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Renewal
+
+To do a dry run of cert renewal:
+
+```
+certbot renew --dry-run
+```
+
+Reload our NGINX web server if the certs change:
+
+```
+docker exec -it nginx sh -c "nginx -s reload"
+```
+
+Checkout the Certbot [docs](https://certbot.eff.org/instructions) for more details
